@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem.Interactions;
+using UnityEngine.UI;
 
 // Use action set asset instead of lose InputActions directly on component.
 public class BabyMovements : MonoBehaviour
@@ -15,17 +16,19 @@ public class BabyMovements : MonoBehaviour
     private bool m_Charging;
     private Vector2 m_Rotation;
 
-
+    private float _burstPoints, _burstTotalNeed;
+    [SerializeField] Slider _slider;
     public void Awake()
     {
         m_Controls = new BabyInput();
         _anim = GetComponent<Animator>();
         m_Controls.BabyMovement.Force.performed += ctx => SetBool();
+        _burstTotalNeed = 30;
+        _slider.maxValue = _burstTotalNeed;
     }
-
     void SetBool()
     {
-        if(!m_Charging)
+        if (!m_Charging && _burstPoints > 1) 
         {
             m_Charging = true;
             burstSpeed = 3;
@@ -57,6 +60,25 @@ public class BabyMovements : MonoBehaviour
         _anim.SetFloat("MoveRight", move.x);
         Look(look);
         Move(move);
+
+        if(_burstPoints < _burstTotalNeed && !m_Charging)
+        {
+            _burstPoints += Time.deltaTime;
+        }else if(!m_Charging)
+        {
+            _burstPoints = _burstTotalNeed;
+        }
+        else if (m_Charging && _burstPoints < 0)
+        {
+            _burstPoints = 0;
+            SetBool();
+        }
+        else if(m_Charging)
+        {
+            _burstPoints -= Time.deltaTime * 3;
+        }
+        _slider.value = _burstPoints; 
+
     }
 
     private void Move(Vector2 direction)
