@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class LootForBaby : MonoBehaviour
 {
-    
+    [SerializeField] List<GameObject> badPref, goodPrefs;
+    [SerializeField] Transform positive, negative;
     void Start()
     {
-        
+        Instantiate(badPref[Random.Range(0, badPref.Count)], negative);
+        Instantiate(goodPrefs[Random.Range(0, goodPrefs.Count)], positive);
     }
 
     private void OnTriggerEnter(Collider other)

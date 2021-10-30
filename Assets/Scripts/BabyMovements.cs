@@ -77,7 +77,7 @@ public class BabyMovements : MonoBehaviour
         {
             _burstPoints -= Time.deltaTime * 3;
         }
-        _slider.value = _burstPoints; 
+        _slider.value = _burstPoints;
 
     }
 

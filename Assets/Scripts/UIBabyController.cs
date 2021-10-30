@@ -7,11 +7,13 @@ using TMPro;
 public class UIBabyController : MonoBehaviour
 {
     [SerializeField] int objCount;
-    [SerializeField] TextMeshProUGUI textMesh;
+    [SerializeField] TextMeshProUGUI textMeshCount, textTimer;
+
+    LevelTimer _levelTimer;
     public void CollectObject(int count)
     {
         objCount -= count;
-        textMesh.text = objCount.ToString();
+        textMeshCount.text = objCount.ToString();
         if(objCount <= 0)
         {
             Debug.Log("WinningBaby");
@@ -21,6 +23,20 @@ public class UIBabyController : MonoBehaviour
 
     private void Start()
     {
-        textMesh.text = objCount.ToString();
+        textMeshCount.text = objCount.ToString();
+        _levelTimer = FindObjectOfType<LevelTimer>();
+        _levelTimer.iTimer += TimeLeftUpdate;
+
+    }
+
+    private void OnDisable()
+    {
+        _levelTimer.iTimer -= TimeLeftUpdate;
+    }
+
+
+    void TimeLeftUpdate(string s)
+    {
+        textTimer.text = s;
     }
 }
