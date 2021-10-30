@@ -9,10 +9,11 @@ using System;
 public class LevelTimer : MonoBehaviour
 {
     [SerializeField] float SecondsForMatch;
-    [SerializeField] TextMeshProUGUI TimerUI;
+    [SerializeField] TextMeshProUGUI TimerUI, ToyCountLeft;
     private bool gameOver;
 
     public event Action<string> iTimer;
+    public static event Action PlayerWin;
     void Start()
     {
         int minutes = Mathf.FloorToInt(SecondsForMatch / 60);
@@ -21,8 +22,14 @@ public class LevelTimer : MonoBehaviour
             + ":" + (seconds <= 9 ? "0" : System.String.Empty) + seconds;
         StartCoroutine(nameof(UpdateTimer));
         iTimer?.Invoke(TimerUI.text);
+        UIBabyController.CountHandler += ChangeCountText;
+        UIBabyController.BabyWin += SetGameOver;
     }
 
+    void ChangeCountText(string s)
+    {
+        ToyCountLeft.text = s;
+    }
     IEnumerator UpdateTimer()
     {
         while (!gameOver)
@@ -47,6 +54,11 @@ public class LevelTimer : MonoBehaviour
 
     }
 
+    private void OnDisable()
+    {
+        UIBabyController.CountHandler -= ChangeCountText;
+        UIBabyController.BabyWin -= SetGameOver;
+    }
     public void SetGameOver()
     {
         gameOver = true;
@@ -55,6 +67,7 @@ public class LevelTimer : MonoBehaviour
     void EndGame()
     {
         gameOver = true;
+        PlayerWin?.Invoke();
         Debug.Log("WinPlayer");
     }
 }

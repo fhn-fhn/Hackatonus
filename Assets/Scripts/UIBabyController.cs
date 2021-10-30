@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class UIBabyController : MonoBehaviour
 {
@@ -10,13 +11,17 @@ public class UIBabyController : MonoBehaviour
     [SerializeField] TextMeshProUGUI textMeshCount, textTimer;
 
     LevelTimer _levelTimer;
+    public static event Action<string> CountHandler;
+    public static event Action BabyWin;
     public void CollectObject(int count)
     {
         objCount -= count;
         textMeshCount.text = objCount.ToString();
-        if(objCount <= 0)
+        CountHandler?.Invoke(textMeshCount.text);
+        if (objCount <= 0)
         {
             Debug.Log("WinningBaby");
+            BabyWin?.Invoke();
         }
 
     }
@@ -26,6 +31,7 @@ public class UIBabyController : MonoBehaviour
         textMeshCount.text = objCount.ToString();
         _levelTimer = FindObjectOfType<LevelTimer>();
         _levelTimer.iTimer += TimeLeftUpdate;
+        CountHandler?.Invoke(textMeshCount.text);
 
     }
 
