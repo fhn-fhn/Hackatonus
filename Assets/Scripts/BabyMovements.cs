@@ -25,6 +25,7 @@ public class BabyMovements : MonoBehaviour
         m_Controls.BabyMovement.Force.performed += ctx => SetBool();
         _burstTotalNeed = 30;
         _slider.maxValue = _burstTotalNeed;
+        m_Rotation = transform.localRotation.eulerAngles;
     }
     void SetBool()
     {
