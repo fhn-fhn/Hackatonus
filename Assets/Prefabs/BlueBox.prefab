@@ -111,6 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debuffType: 0
   timer: 5
+  slowClip: {fileID: 8300000, guid: 8e8218f6a01e74bd5894788e3f912635, type: 3}
 --- !u!54 &8560274459732041659
 Rigidbody:
   m_ObjectHideFlags: 0

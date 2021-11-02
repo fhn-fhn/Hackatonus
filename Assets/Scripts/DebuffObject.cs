@@ -9,6 +9,7 @@ public class DebuffObject : MonoBehaviour
     private FlashObject flashObj;
     private MomMovements momMovements;
 
+    [SerializeField] AudioClip slowClip;
     private void Start()
     {
         momMovements = FindObjectOfType<MomMovements>();
@@ -30,7 +31,7 @@ public class DebuffObject : MonoBehaviour
             switch(debuffType)
             {
                 case DebuffType.Slower:
-                    momMovements.SetDebuffMovement(timer);
+                    momMovements.SetDebuffMovement(timer, slowClip);
                     Destroy(gameObject);
                     break;
                 case DebuffType.Flash:
