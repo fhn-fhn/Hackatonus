@@ -17,12 +17,14 @@ public class EventHandler : MonoBehaviour
         Time.timeScale = 1;
         UIBabyController.BabyWin += BabyWin;
         LevelTimer.PlayerWin += PlayerWin;
+        UIBabyController.Pause += SetPause;
     }
 
     private void OnDisable()
     {
         UIBabyController.BabyWin -= BabyWin;
         LevelTimer.PlayerWin -= PlayerWin;
+        UIBabyController.Pause -= SetPause;
     }
 
     void BabyWin()
@@ -77,4 +79,59 @@ public class EventHandler : MonoBehaviour
         PlayerCount.text = count.ToString();
     }
 
+    public void SetPause()
+    {
+        if(Time.timeScale == 0)
+        {
+            StartCoroutine(nameof(UnPause));
+        }
+        else
+        {
+            StartCoroutine(nameof(Pause));
+        }
+    }
+    IEnumerator Pause()
+    {
+        BabyGameOverPanel.SetActive(true);
+        PlayerGameOverPanel.SetActive(true);
+        Transform temp = FindObjectOfType<OVRPlayerController>().transform;
+        PlayerGameOverPanel.transform.position = temp.position + (temp.forward * 3) + temp.up;
+        PlayerGameOverPanel.transform.localRotation = FindObjectOfType<OVRPlayerController>().transform.rotation;
+        BabyInfo.text = "Пауза";
+        PlayerInfo.text = "Пауза";
+        int timeDown = 3;
+        while (timeDown >= 0)
+        {
+            SetPasueText(timeDown);
+            yield return new WaitForSecondsRealtime(1);
+            timeDown--;
+        }
+        Time.timeScale = 0;
+    }
+
+    IEnumerator UnPause()
+    {
+       
+        Transform temp = FindObjectOfType<OVRPlayerController>().transform;
+        PlayerGameOverPanel.transform.position = temp.position + (temp.forward * 3) + temp.up;
+        PlayerGameOverPanel.transform.localRotation = FindObjectOfType<OVRPlayerController>().transform.rotation;
+        BabyInfo.text = "Игра начнется";
+        PlayerInfo.text = "Игра начнется";
+        int timeDown = 3;
+        while (timeDown >= 0)
+        {
+            SetPasueText(timeDown);
+            yield return new WaitForSecondsRealtime(1);
+            timeDown--;
+        }
+        Time.timeScale = 1;
+        BabyGameOverPanel.SetActive(false);
+        PlayerGameOverPanel.SetActive(false);
+    }
+
+    void SetPasueText(int count)
+    {
+        BabyCount.text = "через "+count.ToString();
+        PlayerCount.text = "через "+count.ToString();
+    }
 }

@@ -12,7 +12,7 @@ public class UIBabyController : MonoBehaviour
 
     LevelTimer _levelTimer;
     public static event Action<string> CountHandler;
-    public static event Action BabyWin;
+    public static event Action BabyWin, Pause;
     public void CollectObject(int count)
     {
         objCount -= count;
@@ -40,6 +40,10 @@ public class UIBabyController : MonoBehaviour
         _levelTimer.iTimer -= TimeLeftUpdate;
     }
 
+    public void SetPause()
+    {
+        Pause?.Invoke();
+    }
 
     void TimeLeftUpdate(string s)
     {
