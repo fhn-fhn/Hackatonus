@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem.Interactions;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // Use action set asset instead of lose InputActions directly on component.
@@ -9,24 +9,25 @@ public class BabyMovements : MonoBehaviour
     public float moveSpeed;
     public float rotateSpeed;
     public float burstSpeed;
-    private Animator _anim;
+    [SerializeField] private Animator _anim;
 
    // private SimpleControls m_Controls;
-    private BabyInput m_Controls;
+   // private BabyInput m_Controls;
     private bool m_Charging;
-    private Vector2 m_Rotation;
+    private Vector2 m_RotationMain, m_Movement, rotateInput;
 
     private float _burstPoints, _burstTotalNeed;
     [SerializeField] Slider _slider;
     public void Awake()
     {
-        m_Controls = new BabyInput();
-        _anim = GetComponent<Animator>();
-        m_Controls.BabyMovement.Force.performed += ctx => SetBool();
+       // m_Controls = new BabyInput();
+        //_anim = GetComponent<Animator>();
+       // m_Controls.BabyMovement.Force.performed += ctx => SetBool();
         _burstTotalNeed = 30;
         _slider.maxValue = _burstTotalNeed;
+        m_RotationMain = transform.localRotation.eulerAngles;
     }
-    void SetBool()
+    public void SetBool()
     {
         if (!m_Charging && _burstPoints > 1) 
         {
@@ -41,25 +42,15 @@ public class BabyMovements : MonoBehaviour
 
         _anim.SetBool("Run", m_Charging);
     }
-    public void OnEnable()
-    {
-        m_Controls.Enable();
-    }
-
-    public void OnDisable()
-    {
-        m_Controls.Disable();
-    }
-
 
     public void Update()
     {
-        var look = m_Controls.BabyMovement.Rotate.ReadValue<Vector2>();
-        var move = m_Controls.BabyMovement.Move.ReadValue<Vector2>();
-        _anim.SetFloat("MoveForward", move.y);
-        _anim.SetFloat("MoveRight", move.x);
-        Look(look);
-        Move(move);
+       // var look = m_Controls.BabyMovement.Rotate.ReadValue<Vector2>();
+       // var move = m_Controls.BabyMovement.Move.ReadValue<Vector2>();
+        _anim.SetFloat("MoveForward", m_Movement.y);
+        _anim.SetFloat("MoveRight", m_Movement.x);
+        Look(rotateInput);
+        Move(m_Movement);
 
         if(_burstPoints < _burstTotalNeed && !m_Charging)
         {
@@ -77,9 +68,11 @@ public class BabyMovements : MonoBehaviour
         {
             _burstPoints -= Time.deltaTime * 3;
         }
-        _slider.value = _burstPoints; 
+        _slider.value = _burstPoints;
 
     }
+    public void OnMove(InputAction.CallbackContext ctx) => m_Movement = ctx.ReadValue<Vector2>();
+    public void OnRotate(InputAction.CallbackContext ctx) => rotateInput = ctx.ReadValue<Vector2>();
 
     private void Move(Vector2 direction)
     {
@@ -96,10 +89,10 @@ public class BabyMovements : MonoBehaviour
         if (rotate.sqrMagnitude < 0.01)
             return;
         var scaledRotateSpeed = rotateSpeed * Time.deltaTime;
-        m_Rotation.y += rotate.x * scaledRotateSpeed;
+        m_RotationMain.y += rotate.x * scaledRotateSpeed;
         //  m_Rotation.x = Mathf.Clamp(m_Rotation.x - rotate.y * scaledRotateSpeed, -89, 89);
-        m_Rotation.x = 0;
-        transform.localEulerAngles = m_Rotation;
+        m_RotationMain.x = 0;
+        transform.localEulerAngles = m_RotationMain;
     }
 
   
